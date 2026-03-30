@@ -4,7 +4,8 @@ import {
     fetchSingleProductById,
     createProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    updateProductImage
 } from "../controllers/product.controller.js"
 import { protect,admin } from "../middlewares/auth.middleware.js"
 import { upload } from "../middlewares/multer.middleware.js"
@@ -23,11 +24,12 @@ const router=Router()
 // router.delete('/:id',protect,admin,deleteProduct)
 
 
-router.route('/').get(fetchAllProduct)
-.post(protect,upload.single("imageUrl"),createProduct)
+router.route('/').get(protect,fetchAllProduct)
+.post(protect,admin,upload.single("imageUrl"),createProduct)
 
-router.route('/:id').get(fetchSingleProductById)
-.put(protect,updateProduct)
-.delete(protect,deleteProduct)
+router.route('/:id').get(protect,fetchSingleProductById)
+.put(protect,admin,updateProduct)
+.put(protect,admin,updateProductImage)
+.delete(protect,admin,deleteProduct)
 
 export default router

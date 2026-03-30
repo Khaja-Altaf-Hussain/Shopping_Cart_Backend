@@ -29,10 +29,13 @@ const userSchema=new mongoose.Schema({
 userSchema.pre("save",async function () {
     console.log("next:")
     if (!this.isModified("password")) return;
+    console.log("OLD PASSWORD FROM MODEL: ",this.password)
     this.password=await bcrypt.hash(this.password,10)
     
 })
 userSchema.methods.isPasswordCorrect=async function (password) {
+    console.log("from model pass:",password)
+    console.log("form model this pass",this.password)
     return await bcrypt.compare(password,this.password)
 }
 userSchema.methods.generateAccessToken=function () {

@@ -5,7 +5,7 @@ import {getUserCart,addItemToCart,removeItemFromCart,updateItemToCart} from "../
 
 const router=Router()
 router.route("/").get(protect,getUserCart)
-router.route("/add").post(protect,addItemToCart)
-router.route("/remove/:productId").delete(protect,removeItemFromCart)
-router.route("/update/:productId").put(protect,updateItemToCart)
+router.route("/add").post(protect,admin,addItemToCart)
+router.route("/remove/:productId").delete(protect,admin,removeItemFromCart)
+router.route("/update/:productId").put(protect,admin,updateItemToCart)
 export default router

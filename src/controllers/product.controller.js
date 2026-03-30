@@ -66,7 +66,7 @@ const updateProduct=asyncHandler(async (req,res)=>{//console.log("req.body:",req
     const {name,description,price,countInStock,category,brand}=req.body
     // console.log("name:",name)
     if(!name || !price || !category || !brand){
-        throw new ApiErrors(400,"Please provide all required fields (name,price,category,brand")
+        throw new ApiErrors(400,"Please provide all required fields (name,price,category,brand)")
     }
     try {
         const product=await Product.findById(req.params.id)
@@ -88,6 +88,49 @@ const updateProduct=asyncHandler(async (req,res)=>{//console.log("req.body:",req
             return res.status(400).json(new ApiErrors('Invalid Product ID format'))
         }
         throw new ApiErrors(500,"Error updating product")
+    }
+})
+
+const updateProductImage=asyncHandler(async()=>{
+    const {imageUrl}=req.file?.path
+    // console.log("name:",name)
+    if(!imageUrl){
+        throw new ApiErrors(400,"Please provide imageUrl  field")
+    }
+    try {
+        
+        const updatedImageLocalPath=req.file.path
+    // if(req.file&&Array.isArray(req.file.imageLocalPath)&&req.file.coverImage.length>0){
+    //     imageLocalPath=req.file.imageLocalPath.path
+    // }
+    
+    if (!updatedImageLocalPath) {
+        throw new ApiErrors(400,"Image field required")
+    }
+    const updatedImg=await uploadOnCloudinary(updatedImageLocalPath)
+    // console.log("imagelocalpath:",imageLocalPath)
+    // console.log("imguplodcloudui:",img)
+    if (!updatedImg) {
+        throw new ApiErrors(400,"Image field required")
+    }
+    const product=await Product.findByIdAndUpdate(req.params.id,
+        {$set:{
+            imageUrl:updatedImg.path
+        }},{
+            new:true
+        }
+    ).select("-password -refreshToken")
+        if (!product) {
+            throw new ApiErrors(404,"Product not found")
+        }
+        
+        res.status(201).json(new ApiResponse(200,product,"Updated Product Image  Successfully"))
+    } catch (error) {
+        console.log('Update Product ERROR...',error)
+        if (error.kind==='ObjectId') {
+            return res.status(400).json(new ApiErrors('Invalid Product ID format'))
+        }
+        throw new ApiErrors(500,"Error updating product Image")
     }
 })
 
@@ -116,5 +159,5 @@ export {
     fetchSingleProductById,
     createProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,updateProductImage
 }

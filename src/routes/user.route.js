@@ -11,7 +11,7 @@ router.route("/logout").post(protect,logoutUser)
 router.route("/refresh-token").post(refreshAccessToken)
 router.route("/change-password").post(protect,changeCurrentPasword)
 router.route("/current-user").get(protect,getCurrentUser)
-router.route("/update-account").patch(protect,admin,updateAccountDetails)
+router.route("/update-account").patch(protect,updateAccountDetails)
 
 
 export default router
