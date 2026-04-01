@@ -65,7 +65,8 @@ const loginUser=asyncHandler(async (req,res)=>{
     const loggedInUser= await User.findById(user._id).select("-password -refreshToken")
     const options={
         httpOnly:true,
-        secure:true
+        secure:true,
+        sameSite:"None"
     }
     return res.status(200)
     .cookie("refreshToken",refreshToken,options)
@@ -74,7 +75,7 @@ const loginUser=asyncHandler(async (req,res)=>{
 })
 
 const logoutUser=asyncHandler(async (req,res)=>{
-    console.log("LOGOUT SUCCESSFULLY")
+    // console.log("LOGOUT SUCCESSFULLY")
     await User.findByIdAndUpdate(req.user._id,
         {
             $set:{
@@ -87,16 +88,17 @@ const logoutUser=asyncHandler(async (req,res)=>{
     ).select("-password")
     const options={
         httpOnly:true,
-        secure:true
+        secure:true,
+        sameSite:"None"
     }
-    console.log("LOGOUT SUCCESSFULLY")
+    // console.log("LOGOUT SUCCESSFULLY")
     return res.status(200).clearCookie("accessToken",options).clearCookie("refreshToken",options)
     .json(new ApiResponse(200,{},"User LOGGED OUT successfully"))
 })
 
 const refreshAccessToken=asyncHandler(async (req,res)=>{
     const incomingRefreshToken=req.cookies.refreshToken  || req.body.refreshToken 
-    console.log("incomeRefresh:",incomingRefreshToken)
+    // console.log("incomeRefresh:",incomingRefreshToken)
     if (!incomingRefreshToken) {
         throw new ApiErrors(401,"Unauthorized request")
     }
@@ -110,11 +112,12 @@ const refreshAccessToken=asyncHandler(async (req,res)=>{
             throw new ApiErrors(401,"Refresh token is expired or used")
         }
         const {accessToken,refreshToken:newRefreshToken}=await generateAccessAndRefreshToken(user?._id)
-        console.log("accessToken:",accessToken)
-        console.log("new refresh :",newRefreshToken)
+        // console.log("accessToken:",accessToken)
+        // console.log("new refresh :",newRefreshToken)
         const options={
             httpOnly:true,
-            secure:true
+            secure:true,
+            sameSite:"None"
         }
         return res.status(200)
         .cookie("refreshToken",newRefreshToken,options)
@@ -132,9 +135,9 @@ const changeCurrentPasword=asyncHandler(async (req,res)=>{
         throw new ApiErrors(401,"Invalid Refresh Token")
     }
     const user=await User.findById(req.user?._id)
-    console.log(oldPassword)
+    // console.log(oldPassword)
     const isPasswordCorrect=await user.isPasswordCorrect(oldPassword)
-    console.log("hash pass:",isPasswordCorrect)
+    // console.log("hash pass:",isPasswordCorrect)
     if(!isPasswordCorrect){
         throw new ApiErrors(401,"Invalid old Password")
     }
@@ -144,7 +147,7 @@ const changeCurrentPasword=asyncHandler(async (req,res)=>{
 })
 
 const getCurrentUser=asyncHandler(async (req,res)=>{
-    console.log("hi")
+    // console.log("hi")
     return res.status(200).json(new ApiResponse(200,req.user,"Current User fetched Successfully"))
 
 })
@@ -165,7 +168,7 @@ const updateAccountDetails=asyncHandler(async (req,res)=>{
             new:true
         }
     ).select("-password -refreshToken")
-    console.log("updated:",user)
+    // console.log("updated:",user)
     return res.status(200).json(new ApiResponse(200,user,"User Account Details Updated  Successfully"))
 
 })

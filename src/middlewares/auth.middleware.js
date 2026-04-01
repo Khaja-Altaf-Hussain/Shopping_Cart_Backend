@@ -7,8 +7,8 @@ const protect = asyncHandler(async (req, res, next) => {
     // const token = req.cookies?.accessToken || req.header("Authorization").replace("Bearer ", "")
     try {
         const token = req.cookies?.accessToken || req.header("Authorization").replace("Bearer ", "")
-        console.log("Cookies:", req.cookies)
-        console.log("Token:", token)
+        // console.log("Cookies:", req.cookies)
+        // console.log("Token:", token)
         if (!token) {
             throw new ApiErrors(401, "UnAuthorized request")
         }
