@@ -10,7 +10,7 @@ const generateAccessAndRefreshToken=async(userId)=>{
         const accessToken=user.generateAccessToken()
         const refreshToken=user.generateRefreshsToken()
         user.refreshToken=refreshToken
-        await user.save({validateBeforSave:false})
+        await user.save({validateBeforeSave:false})
         return {accessToken,refreshToken}
     } catch (error) {
         throw new ApiErrors(500,"Something went wrong while generating access and refresh token")
